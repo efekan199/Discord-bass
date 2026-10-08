@@ -12,6 +12,12 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
+    - name: Set up JDK 17
+      uses: actions/setup-java@v4
+      with:
+        distribution: 'temurin'
+        java-version: '17'
+
     - name: Set up Python
       uses: actions/setup-python@v5
       with:
@@ -19,20 +25,20 @@ jobs:
 
     - name: Install system dependencies
       run: |
-        sudo apt-get update || true
-        sudo apt-get install -y --fix-missing git zip unzip openjdk-17-jdk python3-pip autoconf libtool pkg-config zlib1g-dev libncurses5-dev libncursesw5-dev libtinfo5 cmake libffi-dev libssl-dev
-
-    - name: Install Python dependencies
-      run: |
+        sudo apt-get update
+        sudo apt-get install -y git zip unzip autoconf libtool pkg-config zlib1g-dev libncurses5-dev libncursesw5-dev libtinfo5 cmake libffi-dev libssl-dev
         python -m pip install --upgrade pip setuptools
-        pip install --upgrade "cython<3.0.0" buildozer kivy
+        pip install "cython<3.0.0" buildozer kivy
 
-    - name: Build APK with Buildozer
+    - name: Accept Android SDK Licenses & Build APK
       run: |
-        buildozer -v android debug
+        mkdir -p ~/.android
+        touch ~/.android/repositories.cfg
+        yes | buildozer -v android debug
 
     - name: Upload APK
       uses: actions/upload-artifact@v4
       with:
         name: Discord-Bass-APK
         path: bin/*.apk
+
