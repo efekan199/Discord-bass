@@ -19,16 +19,18 @@ jobs:
 
     - name: Install dependencies
       run: |
+        sudo apt-get update
+        sudo apt-get install -y ccache git libffi-dev build-essential python3-dev libssl-dev libsqlite3-dev zeromq3-dev
         python -m pip install --upgrade pip
-        pip install numpy buildozer Cython
+        pip install buildozer cython==0.29.33 kivy
 
-    - name: Build APK
+    - name: Build APK with Buildozer
       run: |
-        echo "Building APK package..."
-        touch app.apk
+        buildozer -v android debug
 
     - name: Upload APK
       uses: actions/upload-artifact@v4
       with:
         name: Discord-Bass-APK
-        path: "*.apk"
+        path: bin/*.apk
+
